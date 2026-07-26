@@ -5,12 +5,105 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Beyond Variance · Geometric Leverage Index</title>
   <meta name="description" content="Geometric Leverage Index (GLI): ranking genes by how they deform a learned latent manifold—not by expression variance. TCGA-BRCA abstract site." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://jackman993.github.io/beyond-variance/" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://jackman993.github.io/beyond-variance/" />
   <meta property="og:title" content="Beyond Variance: Geometric Leverage for AI-Driven Gene Discovery" />
   <meta property="og:description" content="An unsupervised criterion that ranks genes by encoder Jacobian sensitivity on a learned transcriptomic manifold." />
+  <meta property="og:site_name" content="Beyond Variance" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Beyond Variance: Geometric Leverage for AI-Driven Gene Discovery" />
+  <meta name="twitter:description" content="An unsupervised criterion that ranks genes by encoder Jacobian sensitivity on a learned transcriptomic manifold." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ScholarlyArticle",
+    "@id": "https://jackman993.github.io/beyond-variance/#article",
+    "url": "https://jackman993.github.io/beyond-variance/",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://jackman993.github.io/beyond-variance/"
+    },
+    "headline": "Beyond Variance: Geometric Leverage for AI-Driven Gene Discovery in Cancer Transcriptomes",
+    "alternativeHeadline": "Geometric Leverage Index for transcriptomic gene prioritization",
+    "abstract": "As AI rapidly learns to read the genome—predicting how DNA sequence shapes gene regulation—a complementary question receives less attention: within the expression data we already have, which genes most shape the structure a model learns to see? Cancer hides its drivers in the transcriptome, yet standard feature selection ranks genes by expression variance and thus, by construction, discards the low-variance regulators that often carry the signal. We introduce the Geometric Leverage Index (GLI), an unsupervised criterion that ranks each gene not by how much it varies but by how strongly an in-silico perturbation of it deforms a learned latent manifold, measured as the encoder Jacobian norm. On the TCGA-BRCA cohort (526 patients, 16,383 genes), GLI surfaces low-variance genes invisible to variance- and pathway-based selection and stratifies patient survival where linear baselines fail (log-rank p = 0.0048 vs. 0.157 for PCA).",
+    "author": [
+      {
+        "@type": "Person",
+        "name": "JC Wu",
+        "affiliation": {
+          "@type": "Organization",
+          "name": "TaiScience Research Group",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "New Taipei City",
+            "addressCountry": "TW"
+          }
+        },
+        "email": "jcwu@taiscience.org"
+      },
+      {
+        "@type": "Person",
+        "name": "Ekaterina Molodtsova",
+        "affiliation": {
+          "@type": "Organization",
+          "name": "TaiScience Research Group",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "New Taipei City",
+            "addressCountry": "TW"
+          }
+        },
+        "email": "k.molodtsova@taiscience.org"
+      },
+      {
+        "@type": "Person",
+        "name": "Kai-Siang Chen",
+        "affiliation": {
+          "@type": "Organization",
+          "name": "Chia Nan University of Pharmacy and Science",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Tainan City",
+            "addressCountry": "TW"
+          }
+        },
+        "email": "cks888@mail.cnu.edu.tw"
+      }
+    ],
+    "keywords": [
+      "gene expression",
+      "RNA-seq",
+      "transcriptomics",
+      "cancer genomics",
+      "breast cancer",
+      "biomarker discovery",
+      "feature selection",
+      "representation learning",
+      "geometric deep learning",
+      "interpretability",
+      "Geometric Leverage Index",
+      "TCGA-BRCA"
+    ],
+    "about": [
+      {"@type": "Thing", "name": "Geometric Leverage Index"},
+      {"@type": "Thing", "name": "TCGA-BRCA"},
+      {"@type": "Thing", "name": "Manifold-based Causal Influence Model"}
+    ],
+    "inLanguage": ["en", "zh-Hant"],
+    "isAccessibleForFree": true,
+    "publisher": {
+      "@type": "Organization",
+      "name": "TaiScience Research Group",
+      "url": "http://taiscience.org"
+    }
+  }
+  </script>
 </head>
 <body>
   <div class="noise" aria-hidden="true"></div>

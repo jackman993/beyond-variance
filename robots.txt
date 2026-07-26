@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://jackman993.github.io/beyond-variance/sitemap.xml
