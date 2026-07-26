@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Beyond Variance · Geometric Leverage Index</title>
+  <meta name="description" content="Geometric Leverage Index (GLI): ranking genes by how they deform a learned latent manifold—not by expression variance. TCGA-BRCA abstract site." />
+  <meta property="og:title" content="Beyond Variance: Geometric Leverage for AI-Driven Gene Discovery" />
+  <meta property="og:description" content="An unsupervised criterion that ranks genes by encoder Jacobian sensitivity on a learned transcriptomic manifold." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <a class="mark" href="#top">GLI</a>
+    <nav class="nav">
+      <a href="#abstract" data-i18n="nav.abstract">摘要</a>
+      <a href="#method" data-i18n="nav.method">方法</a>
+      <a href="#results" data-i18n="nav.results">結果</a>
+      <a href="#authors" data-i18n="nav.authors">作者</a>
+    </nav>
+    <button type="button" class="lang-toggle" id="langToggle" aria-label="Switch language">EN</button>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="hero-plane" aria-hidden="true">
+        <svg class="manifold" viewBox="0 0 1400 900" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <radialGradient id="glow" cx="62%" cy="38%" r="55%">
+              <stop offset="0%" stop-color="#3ecfb2" stop-opacity="0.45" />
+              <stop offset="45%" stop-color="#1a6b7a" stop-opacity="0.22" />
+              <stop offset="100%" stop-color="#061018" stop-opacity="0" />
+            </radialGradient>
+            <linearGradient id="mesh" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#7ff0d4" stop-opacity="0.55" />
+              <stop offset="100%" stop-color="#2a9bb0" stop-opacity="0.05" />
+            </linearGradient>
+          </defs>
+          <rect width="1400" height="900" fill="url(#glow)" />
+          <g class="mesh-lines" stroke="url(#mesh)" stroke-width="1.2" fill="none">
+            <path d="M80,720 C220,520 340,480 480,560 S760,720 920,520 S1180,280 1320,360" />
+            <path d="M40,560 C200,420 360,400 520,480 S820,620 980,420 S1200,220 1360,280" />
+            <path d="M120,800 C280,640 420,600 580,680 S860,780 1020,600 S1240,360 1380,440" />
+            <path d="M60,400 C240,300 400,320 560,400 S860,520 1040,340 S1260,180 1380,220" />
+          </g>
+          <g class="nodes" fill="#9ff5e0">
+            <circle class="n1" cx="480" cy="560" r="5" />
+            <circle class="n2" cx="920" cy="520" r="7" />
+            <circle class="n3" cx="760" cy="420" r="4" />
+            <circle class="n4" cx="1040" cy="340" r="6" />
+            <circle class="n5" cx="620" cy="680" r="4.5" />
+          </g>
+        </svg>
+      </div>
+
+      <div class="hero-copy">
+        <p class="brand" data-i18n="hero.brand">Beyond Variance</p>
+        <h1 data-i18n="hero.title">以幾何槓桿力，找出變異度看不到的癌症驅動基因</h1>
+        <p class="lede" data-i18n="hero.lede">Geometric Leverage Index（GLI）不以表現量變異排序，而以基因對學習潛在流形的擾動敏感度，揭露轉錄組中的隱藏結構驅動因子。</p>
+        <div class="cta-row">
+          <a class="btn primary" href="#abstract" data-i18n="hero.cta1">閱讀摘要</a>
+          <a class="btn ghost" href="#results" data-i18n="hero.cta2">關鍵發現</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="strip" aria-label="study snapshot">
+      <div class="strip-item">
+        <span class="num">526</span>
+        <span class="lbl" data-i18n="strip.patients">TCGA-BRCA 患者</span>
+      </div>
+      <div class="strip-item">
+        <span class="num">16,383</span>
+        <span class="lbl" data-i18n="strip.genes">基因</span>
+      </div>
+      <div class="strip-item">
+        <span class="num">p = 0.0048</span>
+        <span class="lbl" data-i18n="strip.survival">GLI 存活分層</span>
+      </div>
+      <div class="strip-item">
+        <span class="num">20</span>
+        <span class="lbl" data-i18n="strip.seeds">隨機種子驗證</span>
+      </div>
+    </section>
+
+    <section id="abstract" class="block">
+      <p class="eyebrow" data-i18n="abstract.eyebrow">Abstract</p>
+      <h2 data-i18n="abstract.title">論文摘要</h2>
+      <div class="abstract-body">
+        <p data-i18n="abstract.p1">隨著 AI 快速學會解讀基因體——預測 DNA 序列如何塑造基因調控——一個互補的問題卻較少被關注：在我們已有的表現量資料中，哪些基因最能塑造模型所學到的結構？癌症將其驅動因子藏在轉錄組裡，但標準特徵選擇依表現量變異度排序，因而在設計上就會捨棄那些常承載訊號的低變異調控基因。</p>
+        <p data-i18n="abstract.p2">我們提出 Geometric Leverage Index（GLI）：一種無監督準則，不以基因變異多少排序，而以對該基因進行 in-silico 擾動後，對學習潛在流形的形變強度（以 encoder Jacobian 範數衡量）來排序。</p>
+        <p data-i18n="abstract.p3">在 TCGA-BRCA 世代（526 名患者、16,383 個基因）上，GLI 找出變異度與路徑選擇看不見的低變異基因，並在線性基線失敗之處成功分層患者存活（log-rank p = 0.0048；PCA 為 0.157）。由於此指標由模型導出，我們在 20 次隨機初始化下驗證，得到可重現的結構驅動因子共識，並以負對照確認。</p>
+        <p data-i18n="abstract.p4">引人注目的是，GLI 可重現地找回先前無癌症註解的基因——顯示學習幾何揭露了超越變異度、路徑隸屬與線性相關的轉錄組重要性維度，對精準腫瘤學的生物標記發現具有直接意涵。</p>
+      </div>
+    </section>
+
+    <section id="method" class="block method">
+      <div class="method-text">
+        <p class="eyebrow" data-i18n="method.eyebrow">Method · M-CIM</p>
+        <h2 data-i18n="method.title">Geometric Leverage Index</h2>
+        <p data-i18n="method.p1">Manifold-based Causal Influence Model（M-CIM）將轉錄組嵌入潛在流形，對每個基因做 in-silico 擾動，再以 encoder 對該基因的平均 Jacobian 範數定義 GLI。</p>
+        <div class="equation" aria-label="GLI equation">
+          <span>GLI(g) = (1/N) Σᵢ ‖ ∂f<sub>θ</sub>(x<sub>i</sub>) / ∂x<sub>i,g</sub> ‖²</span>
+        </div>
+        <p data-i18n="method.p2">與只捕捉離散程度的變異分數不同，GLI 衡量的是非線性流形內的敏感度。低表現變異但高 GLI 的基因，因此浮現為標準管線會捨棄的隱藏結構驅動因子。</p>
+      </div>
+      <figure class="method-fig">
+        <img src="assets/pipeline.png" alt="M-CIM pipeline overview" loading="lazy" />
+        <figcaption data-i18n="method.cap">圖 1. M-CIM 流程：嵌入 → 擾動 → 以 GLI 排序基因對潛在幾何的影響力。</figcaption>
+      </figure>
+    </section>
+
+    <section id="results" class="block">
+      <p class="eyebrow" data-i18n="results.eyebrow">Findings</p>
+      <h2 data-i18n="results.title">關鍵發現</h2>
+      <ul class="findings">
+        <li data-i18n="results.f1">與變異排序近乎正交：NAPRT1、OR10AG1、ASCL2 等高 GLI 基因在變異排名中偏低，標準預處理會將其丟棄。</li>
+        <li data-i18n="results.f2">臨床相關：以 top GLI 基因分層之 Kaplan–Meier 達 log-rank p = 0.0048，PCA 則為 0.157。</li>
+        <li data-i18n="results.f3">可重現：20 個種子共識中，NAPRT1（20/20）與 OR10AG1（19/20）為穩健結構驅動因子；OR10AG1 無既有乳癌註解。</li>
+        <li data-i18n="results.f4">特異性：高變異負對照 ANKRD30A、TNNT1 從不進入 top-50，顯示 GLI 不追蹤表現量大小。</li>
+      </ul>
+
+      <div class="gallery">
+        <figure>
+          <img src="assets/gli-vs-variance.png" alt="GLI versus variance ranking" loading="lazy" />
+          <figcaption data-i18n="results.c1">GLI 與變異／PCA 排序的分歧</figcaption>
+        </figure>
+        <figure>
+          <img src="assets/survival.png" alt="Kaplan-Meier survival stratification" loading="lazy" />
+          <figcaption data-i18n="results.c2">存活分層：GLI vs 基線</figcaption>
+        </figure>
+        <figure>
+          <img src="assets/reproducibility.png" alt="Reproducibility across seeds" loading="lazy" />
+          <figcaption data-i18n="results.c3">跨 20 種子的排名穩定性</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section id="authors" class="block authors">
+      <p class="eyebrow" data-i18n="authors.eyebrow">Citation</p>
+      <h2 data-i18n="authors.title">作者與引用</h2>
+      <p class="paper-title">Beyond Variance: Geometric Leverage for AI-Driven Gene Discovery in Cancer Transcriptomes</p>
+      <p class="byline">JC Wu<sup>*</sup>, Ekaterina Molodtsova<sup>*</sup>, Kai-Siang Chen<sup>†</sup></p>
+      <ul class="affil">
+        <li><sup>*</sup> TaiScience Research Group, New Taipei City, Taiwan</li>
+        <li><sup>†</sup> Chia Nan University of Pharmacy and Science, Tainan City, Taiwan</li>
+      </ul>
+      <p class="emails">
+        <a href="mailto:jcwu@taiscience.org">jcwu@taiscience.org</a> ·
+        <a href="mailto:k.molodtsova@taiscience.org">k.molodtsova@taiscience.org</a> ·
+        <a href="mailto:cks888@mail.cnu.edu.tw">cks888@mail.cnu.edu.tw</a>
+      </p>
+      <p class="keywords">
+        <span data-i18n="authors.kw">關鍵詞：</span>
+        gene expression · RNA-seq · transcriptomics · cancer genomics · breast cancer · biomarker discovery · feature selection · geometric deep learning · interpretability
+      </p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p data-i18n="footer">本頁為論文摘要展示站，可用於 GitHub Pages 部署。</p>
+  </footer>
+
+  <script src="i18n.js"></script>
+</body>
+</html>
